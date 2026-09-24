@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="240" viewBox="0 0 1200 240" role="img" aria-labelledby="title desc">
+<title id="title">NodePeek</title><desc id="desc">See every user. Understand every resource. A self-hosted Linux monitoring dashboard.</desc>
+<rect width="1200" height="240" rx="24" fill="#101923"/>
+<g fill="none" stroke-linecap="round" stroke-width="5"><path d="M52 154h28l21-65 26 88 27-48 28 8 23-52 29 23" stroke="#65e3b0"/><path d="M52 175h37l22-34 22 51 29-27 34 6 38-41" stroke="#75b5ff"/><path d="M52 198h61l23-22 30 29 34-12 34-30" stroke="#b79aff"/></g>
+<text x="278" y="110" fill="#eff6ff" font-family="system-ui,sans-serif" font-size="60" font-weight="750">Node<tspan fill="#65e3b0">Peek</tspan></text>
+<text x="280" y="153" fill="#a4b5c9" font-family="system-ui,sans-serif" font-size="24">See every user. Understand every resource.</text>
+<text x="282" y="198" fill="#7e91a9" font-family="system-ui,sans-serif" font-size="17">LINUX  ·  LOCAL HISTORY  ·  TWO PRIVILEGE EDITIONS  ·  FIVE LANGUAGES</text>
+</svg>

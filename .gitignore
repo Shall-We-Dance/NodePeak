@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+.pytest_cache/
+data/
+config.toml
+*.pyc
+*.sqlite*
+*.log
+.env
+.env.*
+test-results/
+static/hardware-snapshot.json
+dist/
+release-source/

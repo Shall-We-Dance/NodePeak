@@ -1,0 +1,17 @@
+# Copy to config.toml for a source checkout; installers manage their own config path.
+[server]
+host = "auto" # First ZeroTier IPv4; falls back to 127.0.0.1. HTTP only.
+port = 9100
+
+[monitor]
+interval = 5
+raw_retention_days = 2
+history_retention_days = 90
+disk_scan_interval = 21600 # Six hours, in a background thread.
+disk_roots = ["auto"] # /home plus mounted data filesystems; or list explicit directories.
+
+[ups]
+backend = "auto" # auto / apcupsd / nut / disabled
+nut_target = "" # Discover local NUT UPS; or specify ups@localhost.
+apcupsd_target = "127.0.0.1:3551"
+events_file = "/var/log/apcupsd.events"
