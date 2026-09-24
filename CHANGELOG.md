@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.1
+
+- Compare live filesystem usage with a separate, timestamped per-user bar from the last completed scan when files have changed.
+- Keep both bars on the current disk's full-capacity scale; distinguish unrecorded allocation from free space and label clipped historical totals after capacity changes.
+- Add five-language comparison labels, responsive legends, synthetic documentation, and regression checks for active/partial scans and mobile layouts.
+
 ## 1.4.0
 
 - Redraw storage devices as distinct SVG illustrations, refine hardware cards, and add interaction transitions that respect reduced-motion preferences.

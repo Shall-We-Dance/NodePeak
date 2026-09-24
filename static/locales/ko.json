@@ -469,7 +469,12 @@
   "Allocated space · last scan": "할당 공간 · 마지막 스캔",
   "Used · ownership awaiting scan": "사용 중 · 소유자 스캔 대기",
   "Last scan: {time}": "마지막 스캔: {time}",
-  "Files changed since the scan. Gray user values are historical; the bar shows live usage. Ownership will update after the next scan.": "스캔 이후 파일이 변경되었습니다. 회색 사용자 값은 이전 기록이며 막대는 실시간 사용량입니다. 다음 스캔 후 소유자 정보가 갱신됩니다.",
   "No events of this type in the selected time range": "선택한 기간에 해당 유형의 이벤트가 없습니다",
-  "Events follow the selected time range": "이벤트는 선택한 기간을 따릅니다"
+  "Events follow the selected time range": "이벤트는 선택한 기간을 따릅니다",
+  "Live filesystem usage": "실시간 파일 시스템 사용량",
+  "Last scan · by user": "마지막 스캔 · 사용자별",
+  "Not attributed in this scan": "이 스캔에서 귀속되지 않은 용량",
+  "100% = current disk capacity. The remainder is not a record of free space.": "100% = 현재 디스크 총용량. 나머지 부분은 당시 여유 공간을 나타내지 않습니다.",
+  "Recorded allocations exceed current capacity; the bar is clipped.": "기록된 사용량이 현재 용량을 초과하여 막대가 잘렸습니다.",
+  "Files changed since the scan. Gray user values are historical. Ownership will update after the next scan.": "스캔 후 파일이 변경되었습니다. 회색 사용자 값은 과거 기록이며 다음 스캔 후 갱신됩니다."
 }

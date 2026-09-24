@@ -65,3 +65,26 @@ const fresh=context.window.DiskUsage.render(afterDelete,freshScan,[afterDelete],
 assert.match(fresh,/data-owner="1000" style="width:30%/);
 assert.doesNotMatch(fresh,/class="stale-allocation/);
 console.log('Passed: deleted-file reconciliation preserves live capacity, labels stale ownership, and recovers on a fresh scan.');
+
+// Historical ownership keeps the same full-capacity denominator as the live bar.
+assert.match(html,/data-snapshot-owner="1000" style="width:60%/);
+assert.match(html,/snapshot-remainder" style="width:40%/);
+assert.match(html,/alice: 600 · 60%/);
+assert.match(html,/Not attributed in this scan: 400 · 40%/);
+assert.match(html,/The remainder is not a record of free space/);
+assert.doesNotMatch(fresh,/class="disk-snapshot"/);
+const render=(disk,scan,extra={})=>context.window.DiskUsage.render(disk,scan,[disk],{...helpers,...extra});
+assert.doesNotMatch(render({...afterDelete,total:0},oldScan),/class="disk-snapshot"/);
+assert.doesNotMatch(render(afterDelete,{...oldScan,finished_at:null,state:'scanning'}),/class="disk-snapshot"/);
+assert.doesNotMatch(render(afterDelete,{...oldScan,state:'cancelled'}),/class="disk-snapshot"/);
+const progress={...oldScan,state:'scanning',finished_at:null,users:{'1000':{name:'alice',roots:{'/data':650}}}};
+const duringScan=render(afterDelete,progress,{previousScan:oldScan});
+assert.match(duringScan,/data-snapshot-owner="1000" style="width:60%/);
+assert.doesNotMatch(duringScan,/data-snapshot-owner="1000" style="width:65%/);
+const resized=render({...afterDelete,total:500},oldScan);
+assert.match(resized,/data-snapshot-owner="1000" style="width:120%/);
+assert.match(resized,/Recorded allocations exceed current capacity; the bar is clipped/);
+assert.doesNotMatch(resized,/snapshot-remainder" style=/);
+const partial=render(afterDelete,{...oldScan,state:'partial'});
+assert.match(partial,/data-snapshot-owner="1000"/);
+console.log('Passed: historical ownership comparison, absent snapshots, partial scans, active scans, and changed capacity.');

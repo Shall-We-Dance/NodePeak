@@ -34,7 +34,7 @@ Power 默认显示最近 24 小时，事件列表也跟随该时间范围；温�
 
 | | User Edition：**无 sudo** | Admin Edition：**有 sudo** |
 | --- | --- | --- |
-| 下载文件 | `nodepeek-1.4.0-user.tar.gz` | `nodepeek-1.4.0-admin.tar.gz` |
+| 下载文件 | `nodepeek-1.4.1-user.tar.gz` | `nodepeek-1.4.1-admin.tar.gz` |
 | 安装 / 运行 | 普通用户；拒绝以 root 运行 | sudo 安装，root 运行 |
 | 程序目录 | `~/.local/share/nodepeek` | `/opt/nodepeek` |
 | 配置文件 | `~/.config/nodepeek/config.toml` | `/etc/nodepeek/config.toml` |
@@ -56,8 +56,8 @@ Power 默认显示最近 24 小时，事件列表也跟随该时间范围；温�
 ### 普通用户版：全程不需要 sudo
 
 ```bash
-tar -xzf nodepeek-1.4.0-user.tar.gz
-cd nodepeek-1.4.0-user
+tar -xzf nodepeek-1.4.1-user.tar.gz
+cd nodepeek-1.4.1-user
 sh install.sh
 ```
 
@@ -73,8 +73,8 @@ sh install.sh --no-service
 ### 管理员版：sudo / root
 
 ```bash
-tar -xzf nodepeek-1.4.0-admin.tar.gz
-cd nodepeek-1.4.0-admin
+tar -xzf nodepeek-1.4.1-admin.tar.gz
+cd nodepeek-1.4.1-admin
 sudo sh install.sh
 ```
 
@@ -118,6 +118,10 @@ port = 9100
 - **独立磁盘历史：** 默认 **7 天**；可选 **12h / 24h / 3d / 7d / 30d / 90d**，也可自定义 12 小时至 90 天。与顶部 CPU / 内存的时间范围互不影响。
 
 默认每 6 小时在后台扫描一次磁盘。历史图每分钟刷新查询，但不会因此重新扫描文件。只有一次扫描时显示柱形，多次扫描时显示阶梯堆叠历史；不会凭空补出空白时段的数据。
+
+![实时磁盘用量与上次用户扫描结果对比](docs/assets/storage-comparison.png)
+
+删除文件后，上次扫描的用户占用可能超过实时已用空间。此时上方显示实时已用、保留和空闲容量，下方显示带时间标记的上次扫描用户占用条。两条均以当前磁盘总容量为 100%；历史条的剩余部分**不代表当时的空闲空间**。若历史记录超出当前容量，条形会截断并明确提示。
 
 ## 硬件孪生
 

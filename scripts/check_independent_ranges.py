@@ -3,6 +3,17 @@ import sys
 from urllib.parse import urlparse, parse_qs
 from playwright.sync_api import sync_playwright
 
+def show_disk_comparison(page):
+    """Replace only browser state with a deterministic deleted-file example."""
+    page.evaluate("""()=>{
+        window.originalComparisonLive=state.live;
+        const gib=1024**3;
+        state.live={...state.live,disks:[{mount:'/data',device:'/dev/example',fstype:'ext4',total:1000*gib,used:400*gib,free:550*gib}],
+          disk_scan:{state:'complete',finished_at:Math.floor(Date.now()/1000)-7200,roots:['/data'],files:12345,
+            users:{'1000':{name:'alice',roots:{'/data':600*gib}},'1001':{name:'bob',roots:{'/data':150*gib}}}},scan_progress:null};
+        renderDisks();
+    }""")
+
 def check_page(page):
     page.add_init_script('window.setInterval=()=>0;')
     page.reload(wait_until='networkidle')
@@ -72,10 +83,26 @@ def check_page(page):
     page.locator('.sensor-details > summary').click()
     page.evaluate('renderPower()')
     assert page.locator('.sensor-details').evaluate('(e)=>e.open')
+    show_disk_comparison(page)
+    card=page.locator('[data-disk="/data"]')
+    assert card.locator('.disk-snapshot').count()==1
+    live=card.locator('.disk-capacity-bar').bounding_box()
+    previous=card.locator('.disk-snapshot-bar').bounding_box()
+    assert abs(live['width']-previous['width'])<1
+    assert previous['y']>live['y']
+    for selector,share in [('.disk-capacity-bar .unattributed-segment',.4),('[data-snapshot-owner="1000"]',.6),('[data-snapshot-owner="1001"]',.15),('.disk-snapshot-bar .snapshot-remainder',.25)]:
+        assert abs(card.locator(selector).bounding_box()['width']/live['width']-share)<.002,selector
+    assert 'alice' in card.locator('.disk-snapshot-bar').get_attribute('aria-label')
+    assert 'Last scan:' in card.locator('.disk-snapshot-heading').inner_text()
+    # User names and translations must wrap inside the card, even on small screens.
+    page.evaluate("state.live.disk_scan.users['1000'].name='long_username_'.repeat(8);renderDisks()")
     for language in ['en','zh','ko','es','ja']:
         page.evaluate('(lang)=>I18n.setLanguage(lang)',language)
         page.set_viewport_size({'width':320,'height':850})
         assert not page.evaluate('document.documentElement.scrollWidth>innerWidth'),language
+        assert card.locator('.disk-snapshot').evaluate('(e)=>e.scrollWidth<=e.clientWidth'),language
+        assert card.locator('.disk-snapshot-owner').first.evaluate('(e)=>e.scrollWidth<=e.clientWidth'),language
+    page.evaluate('state.live=window.originalComparisonLive;delete window.originalComparisonLive;renderDisks()')
     page.unroute('**/api/events?*',events_route)
 
 

@@ -70,6 +70,10 @@ def main():
             page.screenshot(path=str(output / 'overview.png'))
             page.add_style_tag(content='.topbar{visibility:hidden!important}')
             page.locator('#storage').screenshot(path=str(output / 'storage.png'))
+            from check_independent_ranges import show_disk_comparison
+            show_disk_comparison(page)
+            page.locator('[data-disk="/data"]').screenshot(path=str(output / 'storage-comparison.png'))
+            page.evaluate('state.live=window.originalComparisonLive;delete window.originalComparisonLive;renderDisks()')
             page.locator('#power').screenshot(path=str(output / 'power.png'))
             page.locator('a[href="#hardware"]').click()
             page.locator('#hardware-details').screenshot(path=str(output / 'hardware.png'))
@@ -102,7 +106,7 @@ def main():
     finally:
         server.shutdown()
         server.server_close()
-    print('Rendered six screenshots from synthetic data only; no real monitoring endpoint was accessed.')
+    print('Rendered seven screenshots from synthetic data only; no real monitoring endpoint was accessed.')
 
 
 if __name__ == '__main__':

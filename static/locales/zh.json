@@ -469,7 +469,12 @@
   "Allocated space · last scan": "占用空间 · 上次扫描",
   "Used · ownership awaiting scan": "已用 · 用户归属待扫描",
   "Last scan: {time}": "上次扫描：{time}",
-  "Files changed since the scan. Gray user values are historical; the bar shows live usage. Ownership will update after the next scan.": "扫描后文件已变化。灰色用户数据为历史值，容量条显示实时占用；用户归属将在下次扫描后更新。",
   "No events of this type in the selected time range": "所选时间范围内没有此类事件",
-  "Events follow the selected time range": "事件按所选时间范围显示"
+  "Events follow the selected time range": "事件按所选时间范围显示",
+  "Live filesystem usage": "实时文件系统用量",
+  "Last scan · by user": "上次扫描 · 按用户",
+  "Not attributed in this scan": "本次扫描未归属的容量",
+  "100% = current disk capacity. The remainder is not a record of free space.": "100% = 当前磁盘总容量。剩余部分不代表当时的空闲空间。",
+  "Recorded allocations exceed current capacity; the bar is clipped.": "记录的占用超出当前容量；超出部分未在条中显示。",
+  "Files changed since the scan. Gray user values are historical. Ownership will update after the next scan.": "扫描后文件已变化。灰色的用户占用为历史值，将在下次扫描后更新。"
 }

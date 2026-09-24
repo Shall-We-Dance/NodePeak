@@ -469,7 +469,12 @@
   "Allocated space · last scan": "Espacio asignado · último análisis",
   "Used · ownership awaiting scan": "Usado · propietarios pendientes de análisis",
   "Last scan: {time}": "Último análisis: {time}",
-  "Files changed since the scan. Gray user values are historical; the bar shows live usage. Ownership will update after the next scan.": "Los archivos cambiaron después del análisis. Los valores grises son históricos; la barra muestra el uso actual. Los propietarios se actualizarán tras el siguiente análisis.",
   "No events of this type in the selected time range": "No hay eventos de este tipo en el intervalo seleccionado",
-  "Events follow the selected time range": "Los eventos siguen el intervalo seleccionado"
+  "Events follow the selected time range": "Los eventos siguen el intervalo seleccionado",
+  "Live filesystem usage": "Uso actual del sistema de archivos",
+  "Last scan · by user": "Último análisis · por usuario",
+  "Not attributed in this scan": "Capacidad no atribuida en este análisis",
+  "100% = current disk capacity. The remainder is not a record of free space.": "100% = capacidad actual del disco. El resto no representa el espacio libre de aquel momento.",
+  "Recorded allocations exceed current capacity; the bar is clipped.": "Las asignaciones registradas superan la capacidad actual; la barra está recortada.",
+  "Files changed since the scan. Gray user values are historical. Ownership will update after the next scan.": "Los archivos cambiaron desde el análisis. Los valores de usuario en gris son históricos y se actualizarán tras el próximo análisis."
 }
