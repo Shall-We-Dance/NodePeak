@@ -2,7 +2,7 @@
 
 **简体中文** · [English](README.md) · [MIT 许可证](LICENSE) · [发布指南](docs/RELEASING.md)
 
-**NodePeek** 是一个自托管 Linux 服务器监控工具，可视化记录不同用户的 CPU、内存和磁盘使用情况，同时记录网络、Docker、温度、硬件信息和 UPS 事件。数据保存在本机 SQLite 中，通过可信网络或 ZeroTier 上的 HTTP 页面查看。
+**NodePeek** 是一个自托管 Linux 服务器监控工具，可视化记录不同用户的 CPU、内存和磁盘使用情况，同时记录网络、Docker、温度、硬件信息和 UPS 事件。数据保存在本机 SQLite 中，通过 **9100 端口**提供 HTTP 可视化页面。
 
 不需要云账号、前端构建、CDN 或独立数据库。提供 **User Edition（无需 sudo）** 与 **Admin Edition（管理员版）**。
 
@@ -43,7 +43,7 @@ Network & disk I/O 与 Docker 分别提供独立时间范围（15 分钟至 30 �
 | Docker / UPS | 取决于已有工具、套接字与服务权限 | 仍需要已有工具与服务配置 |
 | 退出登录 / 重启后运行 | 取决于用户服务及 linger 策略 | 已启用的系统服务随开机启动 |
 
-用户版目录支持 `XDG_DATA_HOME`、`XDG_CONFIG_HOME`、`XDG_STATE_HOME`。安装器不会修改 sudoers、用户组、文件访问权限、UPS 配置或 ZeroTier 网络。管理员版也无法保证读取远程文件系统 root-squash、不可用传感器或已变化文件。
+用户版目录支持 `XDG_DATA_HOME`、`XDG_CONFIG_HOME`、`XDG_STATE_HOME`。安装器不会修改 sudoers、用户组、文件访问权限、UPS 配置或网络设置。管理员版也无法保证读取远程文件系统 root-squash、不可用传感器或已变化文件。
 
 ## 安装
 
@@ -88,15 +88,23 @@ sh install.sh --dry-run
 
 ### 打开网页
 
-默认 `host = "auto"` 在启动时选择第一个 ZeroTier IPv4；找不到时仅监听 **127.0.0.1**。实际访问地址会写入启动日志。
+NodePeek 默认使用 **HTTP，端口为 9100**。通过服务实际监听的服务器地址访问：
 
 ```text
-http://YOUR_ZEROTIER_IP:9100/
+http://SERVER_IP:9100/
 ```
 
-请先启动 ZeroTier，或在配置中明确指定 IP，然后重启 NodePeek。也可以把 `server.host` 设置为其他可信网卡地址。
+若希望通过服务器的任意 IPv4 网卡访问，在对应版本的配置文件中设置以下内容，然后重启服务：
 
-**HTTP 页面没有应用登录，能连接该监听地址的设备都可以读取监控信息。** 请限定在可信的内网 / ZeroTier 网络。详见 [部署与数据边界](SECURITY.md)。
+```toml
+[server]
+host = "0.0.0.0"
+port = 9100
+```
+
+也可以填入指定网卡 IP，仅监听该地址；填入 `127.0.0.1` 则仅供本机访问。现有默认值 `host = "auto"` 会选择可用的 ZeroTier IPv4，否则监听本机，实际地址见启动日志。ZeroTier 只是可选网络方式。
+
+页面没有内置登录，路由、防火墙及 9100 端口的访问范围由你自行管理。详见[部署与数据边界](SECURITY.md)。
 
 ## 磁盘占用看得更清楚
 
@@ -109,12 +117,11 @@ http://YOUR_ZEROTIER_IP:9100/
 
 默认每 6 小时在后台扫描一次磁盘。历史图每分钟刷新查询，但不会因此重新扫描文件。只有一次扫描时显示柱形，多次扫描时显示阶梯堆叠历史；不会凭空补出空白时段的数据。
 
-## 硬件、电源与手机界面
+## 硬件孪生
 
-<details>
-<summary><strong>硬件孪生：动态适配插槽数量的可交互 2D 主板图</strong></summary>
+动态适配插槽数量的可交互 2D 主板图。
 
-硬件现在是独立 section，并提供侧栏入口。紧凑示意图的内存金手指沿长边绘制。硬盘依据系统报告的协议、旋转属性和控制器型号区分 NVMe、SATA/SAS SSD 或 HDD、RAID 虚拟硬盘等；未报告协议的 ATA 设备保留 ATA 标注，不推测 RAID 成员盘介质和物理盘位。
+独立的硬件章节提供侧栏入口，以紧凑示意图展示服务器硬件。硬盘依据系统报告的协议、旋转属性和控制器型号区分 NVMe、SATA/SAS SSD 或 HDD、RAID 虚拟硬盘等；未报告协议的 ATA 设备保留 ATA 标注，不推测 RAID 成员盘介质和物理盘位。
 
 ![虚构型号的硬件详情示例](docs/assets/hardware.png)
 
@@ -126,11 +133,13 @@ http://YOUR_ZEROTIER_IP:9100/
 
 DMI 采用字段白名单，不保留序列号、UUID、资产标签和 MAC 地址。RAID 控制器报告的型号会明确标注，不把它当成阵列内每块硬盘的型号。硬件信息在独立线程中每小时更新。
 
-</details>
+## 电源与温度
 
 ![UPS、电量、温度传感器和电源事件](docs/assets/power.png)
 
 UPS 自动识别已有的 **apcupsd** 或 **NUT**，读取状态接口，并在有权限时导入 apcupsd 日志。不会配置 UPS，也不会发送关机或控制命令。监控中断、重启不自动等同于断电。
+
+## 手机界面
 
 <details>
 <summary><strong>中文手机界面</strong></summary>
