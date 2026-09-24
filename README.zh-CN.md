@@ -12,7 +12,7 @@
 
 Network & disk I/O、Docker 与 Power 分别提供独立时间范围（15 分钟至 30 天快捷选择，支持最长 90 天自定义日期），不受顶部 Resource trends 影响。
 
-开发流程与自动测试见[贡献指南](CONTRIBUTING.md)。仓库为 [Shall-We-Dance/NodePeak](https://github.com/Shall-We-Dance/NodePeak)，软件名为 **NodePeek**。
+开发流程与自动测试见[贡献指南](CONTRIBUTING.md)。仓库为 [Shall-We-Dance/NodePeek](https://github.com/Shall-We-Dance/NodePeek)，软件名为 **NodePeek**。
 
 Power 默认显示最近 24 小时，事件列表也跟随该时间范围；温度传感器默认收起。文件在两次磁盘扫描之间变化时，仍显示实时容量，过期的用户占用标为历史值，等待下次扫描更新。
 
@@ -34,7 +34,7 @@ Power 默认显示最近 24 小时，事件列表也跟随该时间范围；温�
 
 | | User Edition：**无 sudo** | Admin Edition：**有 sudo** |
 | --- | --- | --- |
-| 下载文件 | `nodepeek-1.3.2-user.tar.gz` | `nodepeek-1.3.2-admin.tar.gz` |
+| 下载文件 | `nodepeek-1.4.0-user.tar.gz` | `nodepeek-1.4.0-admin.tar.gz` |
 | 安装 / 运行 | 普通用户；拒绝以 root 运行 | sudo 安装，root 运行 |
 | 程序目录 | `~/.local/share/nodepeek` | `/opt/nodepeek` |
 | 配置文件 | `~/.config/nodepeek/config.toml` | `/etc/nodepeek/config.toml` |
@@ -56,8 +56,8 @@ Power 默认显示最近 24 小时，事件列表也跟随该时间范围；温�
 ### 普通用户版：全程不需要 sudo
 
 ```bash
-tar -xzf nodepeek-1.3.2-user.tar.gz
-cd nodepeek-1.3.2-user
+tar -xzf nodepeek-1.4.0-user.tar.gz
+cd nodepeek-1.4.0-user
 sh install.sh
 ```
 
@@ -73,8 +73,8 @@ sh install.sh --no-service
 ### 管理员版：sudo / root
 
 ```bash
-tar -xzf nodepeek-1.3.2-admin.tar.gz
-cd nodepeek-1.3.2-admin
+tar -xzf nodepeek-1.4.0-admin.tar.gz
+cd nodepeek-1.4.0-admin
 sudo sh install.sh
 ```
 

@@ -9,6 +9,16 @@ def check_page(page):
     page.evaluate("I18n.setLanguage('en')")
     page.set_viewport_size({'width':1440,'height':1000})
     page.wait_for_function('()=>state.history && state.networkHistory.data && state.containerHistory.data && state.powerHistory.data')
+    assert page.locator('.twin-drive .drive-glyph').count()==page.evaluate('state.hardware.disks.length')
+    page.locator('.twin-drive').first.click()
+    assert page.locator('.twin-drive').first.get_attribute('aria-pressed')=='true'
+    page.emulate_media(reduced_motion='reduce')
+    page.locator('.twin-drive').last.focus()
+    page.keyboard.press('Enter')
+    assert page.locator('.twin-drive').last.get_attribute('aria-pressed')=='true'
+    assert page.locator('#twin-inspector').evaluate('(e)=>e.getAnimations().length===0')
+    assert page.locator('.twin-drive').first.evaluate('(e)=>getComputedStyle(e).transitionDuration')=='0s'
+    page.emulate_media(reduced_motion='no-preference')
     page.locator('#network-range-buttons [data-section-range="604800"]').click()
     page.wait_for_function('()=>!state.networkHistory.loading && state.networkHistory.data')
     assert page.evaluate('state.range===3600 && state.containerHistory.range===3600 && state.networkHistory.range===604800')

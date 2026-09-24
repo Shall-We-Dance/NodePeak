@@ -88,11 +88,14 @@ def main():
     zip_archive(path, f'nodepeek-{version}-source', source_files)
     assets.append(path)
     (output / 'SHA256SUMS').write_text(''.join(f'{hashlib.sha256(path.read_bytes()).hexdigest()}  {path.name}\n' for path in assets))
+    changelog = (ROOT / 'CHANGELOG.md').read_text()
+    entry = re.search(r'^## ' + re.escape(version) + r'\s*\n(.*?)(?=^## |\Z)', changelog, re.M | re.S)
+    highlights = "## What's new\n\n" + entry.group(1).strip() + "\n\n" if entry else ''
     (output / 'RELEASE_NOTES.md').write_text(f'''# NodePeek v{version} — User & Admin Editions
 
 See every user. Understand every resource.
 
-A self-hosted Linux dashboard for per-user CPU, memory and storage, networking,
+{highlights}A self-hosted Linux dashboard for per-user CPU, memory and storage, networking,
 Docker, temperatures, an interactive 2D hardware twin and UPS power events. History stays in
 local SQLite. English, Chinese, Korean, Spanish and Japanese are included.
 

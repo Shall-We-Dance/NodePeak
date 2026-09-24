@@ -1,14 +1,14 @@
 # Contributing
 
-The software is **NodePeek**; its repository is [Shall-We-Dance/NodePeak](https://github.com/Shall-We-Dance/NodePeak). The spelling difference does not change package names or `nodepeek.service`.
+The software is **NodePeek**; its repository is [Shall-We-Dance/NodePeek](https://github.com/Shall-We-Dance/NodePeek). The systemd service is named `nodepeek.service`.
 
 ## Work in a source checkout
 
 Use a branch in a clean clone, separate from a running installation and its database:
 
 ```bash
-gh repo clone Shall-We-Dance/NodePeak
-cd NodePeak
+gh repo clone Shall-We-Dance/NodePeek
+cd NodePeek
 git switch -c fix/describe-the-change
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements-dev.txt

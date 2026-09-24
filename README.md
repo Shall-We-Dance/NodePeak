@@ -12,7 +12,7 @@ No cloud account, frontend build step, CDN or external database. Choose an unpri
 
 Network & disk I/O, Docker, and Power each have independent time controls (15m–30d presets and custom dates up to 90 days). Changing Resource trends does not change these sections.
 
-Development workflow and CI: [contributing guide](CONTRIBUTING.md). Repository: [Shall-We-Dance/NodePeak](https://github.com/Shall-We-Dance/NodePeak); product name: **NodePeek**.
+Development workflow and CI: [contributing guide](CONTRIBUTING.md). Repository: [Shall-We-Dance/NodePeek](https://github.com/Shall-We-Dance/NodePeek); product name: **NodePeek**.
 
 Power defaults to the last 24 hours; its time range also filters the event log. Temperature sensors are collapsed initially. If files change between disk scans, live capacity stays visible and inconsistent ownership values are marked as historical until the next scan.
 
@@ -34,7 +34,7 @@ Both editions have the same dashboard and history format. The difference is the 
 
 | | User Edition — **no sudo** | Admin Edition — **sudo/root** |
 | --- | --- | --- |
-| Release asset | `nodepeek-1.3.2-user.tar.gz` | `nodepeek-1.3.2-admin.tar.gz` |
+| Release asset | `nodepeek-1.4.0-user.tar.gz` | `nodepeek-1.4.0-admin.tar.gz` |
 | Installer | Run as your regular account | Run with sudo/root |
 | Runtime | Your account; refuses root | Root system service |
 | Installation | `~/.local/share/nodepeek` | `/opt/nodepeek` |
@@ -57,8 +57,8 @@ Download the desired `.tar.gz` and `SHA256SUMS` from the repository's GitHub **R
 ### User Edition: no sudo
 
 ```bash
-tar -xzf nodepeek-1.3.2-user.tar.gz
-cd nodepeek-1.3.2-user
+tar -xzf nodepeek-1.4.0-user.tar.gz
+cd nodepeek-1.4.0-user
 sh install.sh
 ```
 
@@ -74,8 +74,8 @@ The foreground process ends when its session ends unless your session manager ke
 ### Admin Edition: sudo/root
 
 ```bash
-tar -xzf nodepeek-1.3.2-admin.tar.gz
-cd nodepeek-1.3.2-admin
+tar -xzf nodepeek-1.4.0-admin.tar.gz
+cd nodepeek-1.4.0-admin
 sudo sh install.sh
 ```
 

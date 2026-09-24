@@ -78,6 +78,7 @@ def dataset(now=None):
         {'name': '/dev/sdc', 'model': 'Example SAS HDD', 'tran': 'sas', 'rota': True, 'type': 'disk', 'size': 2*1024**4},
         {'name': '/dev/sdd', 'model': 'Example RAID Virtual Disk', 'tran': 'sas', 'rota': True, 'type': 'disk', 'size': 8*1024**4},
     ]
+    hardware['disks'].append({'name':'/dev/sr0','model':'Example DVD-ROM','type':'rom','tran':'sata','rota':False,'size':1024**3})
     hardware['memory']['slots'] = 8
     hardware['memory']['empty_slots'] = 4
     hardware['firmware_records'] = [

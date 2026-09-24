@@ -1,8 +1,8 @@
 # Publishing NodePeek / 发布指南
 
-Project repository: [Shall-We-Dance/NodePeak](https://github.com/Shall-We-Dance/NodePeak). The product and package name is **NodePeek**.
+Project repository: [Shall-We-Dance/NodePeek](https://github.com/Shall-We-Dance/NodePeek). The product and package name is **NodePeek**.
 
-项目仓库名为 **NodePeak**，软件和安装包名为 **NodePeek**。
+项目仓库名为 **NodePeek**，软件和安装包名为 **NodePeek**。
 
 ## Prepare a release
 

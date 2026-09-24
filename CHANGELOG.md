@@ -1,12 +1,12 @@
 # Changelog
 
-## Unreleased
+## 1.4.0
+
+- Redraw storage devices as distinct SVG illustrations, refine hardware cards, and add interaction transitions that respect reduced-motion preferences.
 
 - Keep live used/free/reserved disk capacity visible after file deletion; label inconsistent user totals as historical and avoid fabricated attribution.
 - Give power/temperature charts and events an independent time range, collapse sensors by default, and compact the scrollable event list.
-
-- Add read-only CI for supported Python versions, frontend tests, generated assets, release reproducibility/audits and synthetic browser previews.
-- Document the repository maintenance workflow and keep generated source manifests out of the editable repository root.
+- Expand the hardware README section, simplify HTTP access guidance, and use English contribution and release documentation.
 
 ## 1.3.2
 
