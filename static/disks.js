@@ -37,21 +37,38 @@ window.DiskUsage = (() => {
     const free=`<span class="free-segment" style="width:${share(data.free)}%" title="${esc(caption(t('Free'),data.free))}"></span>`;
     const liveComposition=`<span class="unattributed-segment" style="width:${share(Math.min(data.used,data.total))}%" title="${esc(caption(t('Used · ownership awaiting scan'),data.used))}"></span>`+reserved+free;
     const composition=data.capacityReady?segments+grey+reserved+free:data.total>0?liveComposition:`<span class="unattributed-segment" style="width:100%" title="${esc(t('Scan and live usage differ. The distribution will update after the next scan.'))}"></span>`;
+    // A running scan is not a historical snapshot. Keep the last completed scan separate.
+    const previousScan=options.previousScan||scan;
+    const previous=summarize(disk,previousScan,disks);
+    const showComparison=data.snapshotExceedsUsage&&data.total>0&&previousScan.finished_at&&['complete','partial'].includes(previousScan.state)&&previous.users.length>0;
+    const historicalRemainder=Math.max(0,data.total-previous.attributed);
+    const historicalSegments=previous.users.map(user=>`<span data-snapshot-owner="${esc(user.uid)}" style="width:${share(user.bytes)}%;background:${color(user.uid)}" title="${esc(caption(user.name,user.bytes))}"></span>`).join('');
+    const historicalLegend=previous.users.map(user=>`<span class="disk-snapshot-owner"><i class="user-swatch" style="--user-color:${color(user.uid)}"></i><span>${esc(caption(user.name,user.bytes))}</span></span>`).join('');
+    const snapshotTime=previousScan.finished_at?(options.date?options.date(previousScan.finished_at):new Date(previousScan.finished_at*1000).toLocaleString()):'';
+    const comparison=showComparison?`<div class="disk-snapshot">
+      <div class="disk-snapshot-heading"><strong>${esc(t('Last scan · by user'))}</strong><span>${esc(t('Last scan: {time}',{time:snapshotTime}))}</span></div>
+      <div class="disk-composition disk-snapshot-bar" role="img" aria-label="${esc(t('Last scan · by user')+': '+previous.users.map(user=>caption(user.name,user.bytes)).join('; '))}">${historicalSegments}${historicalRemainder>0?`<span class="snapshot-remainder" style="width:${share(historicalRemainder)}%" title="${esc(caption(t('Not attributed in this scan'),historicalRemainder))}"></span>`:''}</div>
+      <div class="disk-snapshot-legend">${historicalLegend}${historicalRemainder>0?`<span class="disk-snapshot-owner"><i class="user-swatch snapshot-remainder"></i><span>${esc(caption(t('Not attributed in this scan'),historicalRemainder))}</span></span>`:''}</div>
+      <p class="disk-note">${esc(t('100% = current disk capacity. The remainder is not a record of free space.'))}</p>
+      ${previous.attributed>data.total?`<p class="disk-note">${esc(t('Recorded allocations exceed current capacity; the bar is clipped.'))}</p>`:''}
+    </div>`:'';
     const scope=data.scanned?data.roots.join(', '):t('No directories scanned on this disk');
     const incomplete=scan.state==='scanning'||scan.state==='pending';
     const issueList=data.issues.map(issue=>`<li><code>${esc(issue.path)}</code><span>${esc(t(issue.reason||'Unavailable'))}</span><span class="unavailable-size">${esc(t('Size unknown'))}</span></li>`).join('');
     return `<article class="disk-card" data-disk="${esc(disk.mount)}">
       <header><div class="disk-heading"><h3>${esc(disk.mount)}</h3><div class="disk-device">${esc(disk.device)} · ${esc(disk.fstype)}</div></div><span class="disk-percent" title="${esc(t('Used / total capacity'))}">${esc(percent(data.used))}</span></header>
       <div class="disk-capacity"><strong>${bytes(disk.used)} <span>/ ${bytes(disk.total)}</span></strong><span>${esc(t('Free {size}',{size:bytes(disk.free)}))}</span></div>
-      <div class="disk-composition disk-capacity-bar" role="img" aria-label="${esc(t('Disk capacity by user'))}">${composition}</div>
+      ${showComparison?`<div class="disk-live-label">${esc(t('Live filesystem usage'))}</div>`:''}
+      <div class="disk-composition disk-capacity-bar" role="img" aria-label="${esc(t(data.capacityReady?'Disk capacity by user':'Live filesystem usage'))}">${composition}</div>
       <div class="disk-capacity-legend"><span>${esc(t('100% = total disk capacity'))}</span><span class="capacity-keys">${data.reserved>0?`<span title="${esc(caption(t('Reserved space'),data.reserved))}"><i class="user-swatch reserved-swatch"></i>${esc(t('Reserved {size}',{size:bytes(data.reserved)}))}</span>`:''}<span><i class="user-swatch free-swatch"></i>${esc(t('Free'))}</span>${incomplete?`<span class="pill neutral">${esc(t('Scanning'))}</span>`:''}</span></div>
+      ${comparison}
       <div class="disk-user-table-wrap"><table class="disk-user-table"><thead><tr><th scope="col">${esc(t('User'))}</th><th scope="col">${esc(t('Allocated space · last scan'))}</th><th scope="col">${esc(t('Capacity %'))}</th></tr></thead><tbody>
       ${rows}
       <tr class="unattributed-row"><th scope="row"><span class="disk-user-name"><i class="user-swatch unavailable-swatch"></i><span>${esc(t('Unattributed'))}</span></span></th><td>${data.unattributed==null?'—':bytes(data.unattributed)}</td><td>${data.unattributed==null?'—':esc(percent(data.unattributed))}</td></tr>
       </tbody></table></div>
       <div class="disk-scan-scope"><span>${esc(t('Scanned directories'))}</span><span>${esc(scope)}</span></div>
-      ${scan.finished_at?`<p class="disk-note">${esc(t('Last scan: {time}',{time:options.date?options.date(scan.finished_at):new Date(scan.finished_at*1000).toLocaleString()}))}</p>`:''}
-      ${data.snapshotExceedsUsage?`<p class="disk-note stale-note">${esc(t('Files changed since the scan. Gray user values are historical; the bar shows live usage. Ownership will update after the next scan.'))}</p>`:''}
+      ${scan.finished_at&&!showComparison?`<p class="disk-note">${esc(t('Last scan: {time}',{time:options.date?options.date(scan.finished_at):new Date(scan.finished_at*1000).toLocaleString()}))}</p>`:''}
+      ${data.snapshotExceedsUsage?`<p class="disk-note stale-note">${esc(t('Files changed since the scan. Gray user values are historical. Ownership will update after the next scan.'))}</p>`:''}
       ${data.issues.length?`<details class="disk-issues" ${open?'open':''}><summary>${esc(t('Unavailable or changed entries'))} <span>${fmt(data.issues.length,0)}</span></summary><ul>${issueList}</ul></details>`:''}
     </article>`;
   }

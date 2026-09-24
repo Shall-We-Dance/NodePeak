@@ -469,7 +469,12 @@
   "Allocated space · last scan": "Allocated space · last scan",
   "Used · ownership awaiting scan": "Used · ownership awaiting scan",
   "Last scan: {time}": "Last scan: {time}",
-  "Files changed since the scan. Gray user values are historical; the bar shows live usage. Ownership will update after the next scan.": "Files changed since the scan. Gray user values are historical; the bar shows live usage. Ownership will update after the next scan.",
   "No events of this type in the selected time range": "No events of this type in the selected time range",
-  "Events follow the selected time range": "Events follow the selected time range"
+  "Events follow the selected time range": "Events follow the selected time range",
+  "Live filesystem usage": "Live filesystem usage",
+  "Last scan · by user": "Last scan · by user",
+  "Not attributed in this scan": "Not attributed in this scan",
+  "100% = current disk capacity. The remainder is not a record of free space.": "100% = current disk capacity. The remainder is not a record of free space.",
+  "Recorded allocations exceed current capacity; the bar is clipped.": "Recorded allocations exceed current capacity; the bar is clipped.",
+  "Files changed since the scan. Gray user values are historical. Ownership will update after the next scan.": "Files changed since the scan. Gray user values are historical. Ownership will update after the next scan."
 }

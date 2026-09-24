@@ -274,3 +274,17 @@ nav a,.segmented button,.interface-filters button,.language-menu button,.storage
 @media(hover:hover) and (prefers-reduced-motion:no-preference){.twin-drive:hover{transform:translateY(-2px);box-shadow:0 6px 16px #0003}.twin-drive:hover .drive-glyph{transform:translateY(-1px)}.twin-drive:hover .twin-drive-arrow{transform:translate(1px,-1px);opacity:1}.button:active,.twin-drive:active{transform:translateY(0)}}
 @media(max-width:600px){.twin-storage{padding:3px 10px 10px}.twin-drive{grid-template-columns:62px minmax(0,1fr);gap:10px;padding:11px;min-height:100px}.twin-drive-art{width:62px;height:68px}.drive-glyph{width:64px}.twin-drive-topline strong{font-size:.71rem}.twin-drive-caption>.twin-drive-model{font-size:.63rem}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* Compare live capacity with the last completed ownership scan on the same scale. */
+.disk-live-label{font-size:.7rem;color:#a5b4c6;margin-top:14px}
+.disk-live-label+.disk-capacity-bar{margin-top:7px}
+.disk-snapshot{padding:12px 0 14px;margin-bottom:12px;border-top:1px solid #293646;border-bottom:1px solid #293646;min-width:0}
+.disk-snapshot-heading{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;font-size:.7rem;color:#93a5bb;line-height:1.6}
+.disk-snapshot-heading strong{font-weight:600;color:#b7c6d8}
+.disk-snapshot-bar{height:12px;margin:8px 0 10px}
+.disk-snapshot-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.68rem;line-height:1.6;color:#a5b4c6}
+.disk-snapshot-owner{display:flex;align-items:baseline;gap:6px;min-width:0;max-width:100%}
+.disk-snapshot-owner>span{min-width:0;overflow-wrap:anywhere}
+.disk-snapshot-owner .user-swatch{flex:0 0 8px;margin:0}
+.snapshot-remainder{background:repeating-linear-gradient(90deg,#202c3b 0px,#202c3b 4px,#344354 4px,#344354 5px)}
+.disk-snapshot .disk-note{margin:8px 0 0;font-size:.65rem;line-height:1.6}

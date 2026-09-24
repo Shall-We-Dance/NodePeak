@@ -204,7 +204,7 @@ function renderDisks(){
   const expanded=new Set([...cards.querySelectorAll('.disk-issues[open]')].map(details=>details.closest('[data-disk]').dataset.disk));
   const scrolls=new Map([...cards.querySelectorAll('.disk-user-table-wrap')].map(table=>[table.closest('[data-disk]').dataset.disk,table.scrollTop]));
   const selectedUser=Object.keys(currentScan.users||{}).includes(state.storageQuery)?state.storageQuery:state.user;
-  const html=l.disks.map(disk=>DiskUsage.render(disk,currentScan,l.disks,{esc,bytes,fmt,color,date,selectedUser,open:expanded.has(disk.mount)})).join('');
+  const html=l.disks.map(disk=>DiskUsage.render(disk,currentScan,l.disks,{esc,bytes,fmt,color,date,selectedUser,previousScan:l.disk_scan,open:expanded.has(disk.mount)})).join('');
   const focused=document.activeElement?.closest('[data-storage-user]');
   const focusKey=focused&&cards.contains(focused)?{disk:focused.closest('[data-disk]').dataset.disk,uid:focused.dataset.storageUser}:null;
   if(cards.innerHTML!==html){

@@ -34,7 +34,7 @@ Both editions have the same dashboard and history format. The difference is the 
 
 | | User Edition — **no sudo** | Admin Edition — **sudo/root** |
 | --- | --- | --- |
-| Release asset | `nodepeek-1.4.0-user.tar.gz` | `nodepeek-1.4.0-admin.tar.gz` |
+| Release asset | `nodepeek-1.4.1-user.tar.gz` | `nodepeek-1.4.1-admin.tar.gz` |
 | Installer | Run as your regular account | Run with sudo/root |
 | Runtime | Your account; refuses root | Root system service |
 | Installation | `~/.local/share/nodepeek` | `/opt/nodepeek` |
@@ -57,8 +57,8 @@ Download the desired `.tar.gz` and `SHA256SUMS` from the repository's GitHub **R
 ### User Edition: no sudo
 
 ```bash
-tar -xzf nodepeek-1.4.0-user.tar.gz
-cd nodepeek-1.4.0-user
+tar -xzf nodepeek-1.4.1-user.tar.gz
+cd nodepeek-1.4.1-user
 sh install.sh
 ```
 
@@ -74,8 +74,8 @@ The foreground process ends when its session ends unless your session manager ke
 ### Admin Edition: sudo/root
 
 ```bash
-tar -xzf nodepeek-1.4.0-admin.tar.gz
-cd nodepeek-1.4.0-admin
+tar -xzf nodepeek-1.4.1-admin.tar.gz
+cd nodepeek-1.4.1-admin
 sudo sh install.sh
 ```
 
@@ -119,6 +119,10 @@ The dashboard has no built-in login. You manage routing, firewall rules and who 
 - **Disk history has its own range:** defaults to **7 days**; choose **12h / 24h / 3d / 7d / 30d / 90d** or a custom interval between 12 hours and 90 days. Changing it does not change the CPU/memory range above.
 
 Disk scanning runs every six hours by default, in the background. The history chart updates its query every minute; it does not force a new disk scan. One available scan appears as a bar, multiple scans as a stepped stacked history. Empty periods are not invented measurements.
+
+![Live disk usage compared with the last ownership scan](docs/assets/storage-comparison.png)
+
+After deletions, recorded user allocations can exceed live used space. The upper bar then shows live used/reserved/free capacity; a second bar shows user allocations from the last completed scan, with its timestamp. Both use current total disk capacity as 100%. The historical remainder is **not a measurement of past free space**. If recorded allocations exceed current capacity, the bar is clipped with an explicit note.
 
 ## Hardware twin
 
