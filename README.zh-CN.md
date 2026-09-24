@@ -12,6 +12,8 @@
 
 Network & disk I/O 与 Docker 分别提供独立时间范围（15 分钟至 30 天快捷选择，支持最长 90 天自定义日期），不受顶部 Resource trends 影响。
 
+开发流程与自动测试见[贡献指南](CONTRIBUTING.md)。仓库为 [Shall-We-Dance/NodePeak](https://github.com/Shall-We-Dance/NodePeak)，软件名为 **NodePeek**。
+
 ## 功能一览
 
 | 模块 | 内容 |

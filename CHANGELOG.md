@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add read-only CI for supported Python versions, frontend tests, generated assets, release reproducibility/audits and synthetic browser previews.
+- Document the private repository maintenance workflow and keep generated source manifests out of the editable repository root.
+
 ## 1.3.2
 
 - Adopted NodePeek as the product name across the dashboard, documentation, installer defaults and release archives.

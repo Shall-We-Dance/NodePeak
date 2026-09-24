@@ -2,7 +2,7 @@
 from pathlib import Path
 
 TOP = ('VERSION', 'README.md', 'README.zh-CN.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md',
-       'CHANGELOG.md', 'SECURITY.md', 'pytest.ini', '.gitignore', 'config.example.toml',
+       'CHANGELOG.md', 'CONTRIBUTING.md', 'SECURITY.md', 'pytest.ini', '.gitignore', 'config.example.toml',
        'requirements.txt', 'requirements.lock', 'requirements-dev.txt', 'run.py', 'install.sh')
 SCRIPTS = ('build_locales.py', 'version_assets.py', 'install.py', 'build_release.py',
            'verify_release.py', 'demo_data.py', 'render_readme.py', 'check_hardware_twin.py', 'check_independent_ranges.py')
