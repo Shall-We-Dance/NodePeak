@@ -2,7 +2,7 @@
 
 [简体中文](README.zh-CN.md) · **English** · [MIT license](LICENSE) · [Release guide](docs/RELEASING.md)
 
-**NodePeek** is a self-hosted Linux server monitor that shows who is using CPU, memory and disk space, alongside networking, Docker, temperatures, hardware and UPS events. It keeps history in local SQLite and serves a lightweight HTTP dashboard over your trusted network or ZeroTier.
+**NodePeek** is a self-hosted Linux server monitor that shows who is using CPU, memory and disk space, alongside networking, Docker, temperatures, hardware and UPS events. It keeps history in local SQLite and serves a lightweight HTTP dashboard on port **9100**.
 
 No cloud account, frontend build step, CDN or external database. Choose an unprivileged **User Edition** or a root **Admin Edition**.
 
@@ -44,7 +44,7 @@ Both editions have the same dashboard and history format. The difference is the 
 | Docker / UPS | Existing CLI/socket/daemon permissions apply | Existing tools and daemon configuration still required |
 | After logout / reboot | Depends on your user-service/linger policy | Starts at boot once enabled |
 
-User paths honor `XDG_DATA_HOME`, `XDG_CONFIG_HOME` and `XDG_STATE_HOME`. Neither installer modifies sudoers, group memberships, filesystem access rules, UPS configuration or ZeroTier membership. Root cannot bypass every restriction: remote root-squash, unavailable sensors and changing files can still produce partial results.
+User paths honor `XDG_DATA_HOME`, `XDG_CONFIG_HOME` and `XDG_STATE_HOME`. Neither installer modifies sudoers, group memberships, filesystem access rules, UPS configuration or network settings. Root cannot bypass every restriction: remote root-squash, unavailable sensors and changing files can still produce partial results.
 
 ## Install
 
@@ -89,15 +89,23 @@ If `venv` or `pip` is missing, use a Python installation that includes them; Use
 
 ### Open the dashboard
 
-The default `host = "auto"` binds to the first active ZeroTier IPv4 address. If none exists at startup, it binds to **127.0.0.1**. The listening URL is printed in the service log.
+NodePeek serves its dashboard over **HTTP on port 9100**. Access it using an address on which the service is listening:
 
 ```text
-http://YOUR_ZEROTIER_IP:9100/
+http://SERVER_IP:9100/
 ```
 
-Start ZeroTier before NodePeek, or set an explicit address in the configuration and restart. To use a different trusted interface, set its IP as `server.host`.
+For access through any server IPv4 interface, set the following in the edition's configuration file, then restart its service:
 
-**HTTP has no application login. Anyone who can reach the listening address can read monitoring information.** Keep it on a trusted private/ZeroTier network. See [deployment and data boundaries](SECURITY.md).
+```toml
+[server]
+host = "0.0.0.0"
+port = 9100
+```
+
+Use a specific interface IP to limit the listener, or `127.0.0.1` for local-only access. The existing default `host = "auto"` selects an available ZeroTier IPv4, otherwise localhost; the actual listening URL appears in the service log. ZeroTier is optional.
+
+The dashboard has no built-in login. You manage routing, firewall rules and who can reach port 9100. See [deployment and data boundaries](SECURITY.md).
 
 ## Storage, with ownership
 
@@ -110,12 +118,11 @@ Start ZeroTier before NodePeek, or set an explicit address in the configuration 
 
 Disk scanning runs every six hours by default, in the background. The history chart updates its query every minute; it does not force a new disk scan. One available scan appears as a bar, multiple scans as a stepped stacked history. Empty periods are not invented measurements.
 
-## Hardware, power and mobile
+## Hardware twin
 
-<details>
-<summary><strong>Hardware twin: an adaptive, interactive 2D motherboard</strong></summary>
+An adaptive, interactive 2D motherboard view.
 
-Hardware now has its own sidebar section. DIMM contacts follow the long edge in a compact schematic. Storage types use reported transport, rotation flags, and controller identity: NVMe, SATA/SAS SSD or HDD, and RAID virtual disks. ATA without transport remains ATA; RAID member media and bay positions cannot be inferred.
+The dedicated Hardware section brings the server inventory into one compact diagram. Storage types use reported transport, rotation flags, and controller identity: NVMe, SATA/SAS SSD or HDD, and RAID virtual disks. ATA without transport remains ATA; RAID member media and bay positions cannot be inferred.
 
 ![Expanded hardware inventory with fictional demonstration models](docs/assets/hardware.png)
 
@@ -127,11 +134,13 @@ This is a **schematic**, not a reconstruction of physical placement or CPU-to-me
 
 DMI fields use an allowlist: serial numbers, UUIDs, asset tags and MAC addresses are omitted. A RAID controller model is labeled as controller-reported; it is not claimed to be the model of each member drive. Inventory updates independently once per hour.
 
-</details>
+## Power and temperature
 
 ![UPS charge, temperature sensors and power events](docs/assets/power.png)
 
 UPS integration detects local **apcupsd** or **NUT**. It reads their existing status interfaces and, when readable, the apcupsd event file. It does not configure your UPS or send shutdown/control commands. A monitoring gap or reboot is not automatically labeled a power failure.
+
+## Mobile view
 
 <details>
 <summary><strong>Mobile view in Simplified Chinese</strong></summary>

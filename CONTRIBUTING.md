@@ -1,8 +1,6 @@
-# Contributing / 开发与维护
+# Contributing
 
-The software is **NodePeek**; its repository is [Shall-We-Dance/NodePeak](https://github.com/Shall-We-Dance/NodePeak). The spelling difference does not change package names or `nodepeek.service`. While the repository is private, cloning, pull requests and Actions artifacts require an authorized GitHub account.
-
-软件名为 **NodePeek**，当前仓库名为 **NodePeak**。安装包与服务名保持 `nodepeek`。仓库为 private 时，需要有权限的 GitHub 账号访问。
+The software is **NodePeek**; its repository is [Shall-We-Dance/NodePeak](https://github.com/Shall-We-Dance/NodePeak). The spelling difference does not change package names or `nodepeek.service`.
 
 ## Work in a source checkout
 
@@ -31,8 +29,6 @@ python3 scripts/verify_release.py dist
 
 When changing UI strings, update all five `static/locales/*.json` dictionaries, then commit the rebuilt `static/locales.js` and `static/index.html`. When changing CSS/JS without translations, run `python3 scripts/version_assets.py` and commit the updated asset URLs. CI rejects stale generated assets.
 
-修改文案时须同步五种语言并重新生成语言包；修改 JS/CSS 后须刷新资源哈希。CI 会检查生成文件是否过期。
-
 For browser smoke checks and README illustrations, use fictional data only:
 
 ```bash
@@ -44,9 +40,7 @@ On a minimal Linux host, Playwright may need OS libraries; `python -m playwright
 
 ## Pull requests and releases
 
-Review `git diff` and stage specific source files. Do not include real configuration, history databases, hardware snapshots, logs or credentials. CI runs Python 3.11/3.13 tests, all JavaScript logic tests, locale/asset checks, reproducible release builds, archive audits and a synthetic browser smoke test. Its token is read-only; it does not deploy, publish a release or change repository visibility.
-
-提交前检查差异，只添加源码和脱敏演示资料。CI 不会部署服务器、自动发布 Release 或将仓库公开。
+Review `git diff` and stage specific source files. Do not include real configuration, history databases, hardware snapshots, logs or credentials. CI runs Python 3.11/3.13 tests, all JavaScript logic tests, locale/asset checks, reproducible release builds, archive audits and a synthetic browser smoke test. Its token is read-only; it does not deploy, publish a release.
 
 Push your branch and open a PR with the problem, resulting behavior and validation:
 

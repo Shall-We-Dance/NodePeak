@@ -96,7 +96,7 @@ A self-hosted Linux dashboard for per-user CPU, memory and storage, networking,
 Docker, temperatures, an interactive 2D hardware twin and UPS power events. History stays in
 local SQLite. English, Chinese, Korean, Spanish and Japanese are included.
 
-## Choose your download / 选择下载
+## Choose your download
 
 - **User Edition** (`nodepeek-{version}-user.tar.gz`): install and run without sudo;
   collection uses your account's existing permissions.
@@ -110,14 +110,18 @@ Linux and Python 3.11+ with venv/pip are required. Initial dependency installati
 requires network access. These are source distributions, not bundled binaries.
 
 Extract your chosen edition and run `sh install.sh` (User) or `sudo sh install.sh`
-(Admin). Default HTTP port: 9100. Auto-bind selects ZeroTier, otherwise localhost.
-No application login: use a trusted private network. The README covers foreground
+(Admin). Access the dashboard over HTTP on port 9100 using the configured listening
+address. There is no built-in login; you manage network access and firewall rules.
+The README covers listener configuration, foreground
 mode, service persistence, configuration, optional tools and measurement limits.
 
-新增可交互 2D 硬件孪生，动态适配 CPU 插槽和内存槽数量，并区分已安装、空槽与未知状态。
-默认通过 HTTP 查看，磁盘历史独立控制，默认 7 天、最短 12 小时。
-两个权限版本共用界面，缺少权限时如实显示不完整数据。
-发布内容已排除真实配置、IP、用户信息、数据库、日志与硬件快照；截图全部使用虚构演示数据。
+The interactive hardware diagram adapts to CPU and memory slots, distinguishing
+installed, empty and unknown states. Disk history has an independent time range,
+defaulting to seven days with a minimum of twelve hours. Both editions share the
+same interface and clearly mark incomplete data when access is limited.
+
+Packages exclude real configuration, addresses, account information, databases,
+logs and hardware snapshots. Documentation screenshots use fictional data only.
 
 License: MIT; bundled Apache ECharts retains Apache-2.0.
 ''')
