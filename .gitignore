@@ -12,3 +12,6 @@ test-results/
 static/hardware-snapshot.json
 dist/
 release-source/
+
+# Generated archive manifest; rebuilt for each release.
+/SOURCE_MANIFEST.json

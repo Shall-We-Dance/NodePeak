@@ -12,6 +12,8 @@ No cloud account, frontend build step, CDN or external database. Choose an unpri
 
 Network & disk I/O and Docker each have independent time controls (15m–30d presets and custom dates up to 90 days). Changing Resource trends does not change these sections.
 
+Development workflow and CI: [contributing guide](CONTRIBUTING.md). Repository: [Shall-We-Dance/NodePeak](https://github.com/Shall-We-Dance/NodePeak); product name: **NodePeek**.
+
 ## What you can see
 
 | Area | What NodePeek records and displays |

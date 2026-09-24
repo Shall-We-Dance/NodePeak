@@ -1,21 +1,24 @@
 # Publishing NodePeek / 发布指南
 
-The provided `release-source/` folder is a clean, uploadable repository tree. The working installation and its private data are not part of this tree. You publish it yourself; the build scripts do not create repositories, upload files or read GitHub credentials.
+Project repository: [Shall-We-Dance/NodePeak](https://github.com/Shall-We-Dance/NodePeak). The product and package name is **NodePeek**. The repository currently uses private visibility; releases and assets follow repository access permissions. No build command changes that visibility.
 
-提供的 `release-source/` 是可直接上传 GitHub 的干净代码目录。`dist/` 中是 Release 附件。不要上传正在运行的整个开发目录；它可能有真实配置、数据库和截图。
+项目仓库名为 **NodePeak**，软件和安装包名为 **NodePeek**。私有仓库中的 Release 和附件供有权限的账号访问；打包不会更改仓库可见性。
 
-## Files for the first release
+## Prepare a release
 
-- Repository name suggestion / 建议仓库名: **NodePeek**
-- Tag / 标签: **v1.3.2**
-- Release title / 标题: **NodePeek v1.3.2 — User & Admin Editions**
-- Description / 描述: copy `dist/RELEASE_NOTES.md`.
-- Assets / 附件: the User and Admin `.tar.gz`, the source `.zip`, and `SHA256SUMS`.
-- Optional audit attachment / 可选审计附件: `release-audit.json` (file counts and check results only).
+1. Merge reviewed changes after CI passes. Update `VERSION`, `CHANGELOG.md`, and both READMEs' versioned installation examples together.
+2. Build and audit from the exact commit to release using the commands below.
+3. Review `dist/RELEASE_NOTES.md` and the synthetic documentation images. Add the version's specific changes from the changelog to the release description.
+4. Create a GitHub Release in this repository, choosing tag `v<VERSION>` at that same commit. Use title `NodePeek v<VERSION> — User & Admin Editions`.
+5. Attach the matching User/Admin `.tar.gz`, source `.zip`, and `SHA256SUMS`. Optionally attach `release-audit.json`.
 
-Create your public repository, upload the **contents** of `release-source/` so README.md is at the repository root, then create a GitHub Release for `v1.3.2` and attach those files. GitHub's automatically generated source archive is separate from the two edition-specific install packages.
+当前版本见仓库根目录 `VERSION`。审核合并并通过 CI 后，从对应提交打包、审查并手动发布。不要将 `dist/`、运行数据或真实截图提交进源码仓库。
 
-创建公开仓库后，把 `release-source/` **里面的内容**放在仓库根目录，保证打开仓库就能看到图文 README。然后创建 `v1.3.2` Release，粘贴发布说明并上传附件。无需把 `dist/`、虚拟环境或历史数据提交到仓库。
+GitHub's automatic source archives do not contain edition-specific metadata. Use the generated User/Admin packages for installation defaults, or explicitly choose `--edition` when installing a source checkout.
+
+`release-source/` is a generated clean source snapshot for distribution. For normal maintenance, commit changes in the existing clone; do not replace the repository with this directory. Root `SOURCE_MANIFEST.json` files from earlier archive uploads are unnecessary in Git: the builder generates a fresh manifest for each archive and clean snapshot.
+
+CI validates changes and generates synthetic UI preview artifacts. It does not publish GitHub Releases or deploy to the running server.
 
 ## Build again
 

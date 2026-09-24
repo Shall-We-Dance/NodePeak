@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Render the real frontend with synthetic data; never contacts the monitoring server."""
+import argparse
 import functools
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import json
@@ -14,6 +15,10 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output-dir', type=Path, default=ROOT / 'docs/assets',
+                        help='Screenshot destination; defaults to the documentation assets directory')
+    args = parser.parse_args()
     data = dataset()
     class Handler(SimpleHTTPRequestHandler):
         def log_message(self, *args):
@@ -46,7 +51,7 @@ def main():
     server = ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Handler, directory=str(ROOT)))
     worker = threading.Thread(target=server.serve_forever, daemon=True)
     worker.start()
-    output = ROOT / 'docs/assets'
+    output = args.output_dir
     output.mkdir(parents=True, exist_ok=True)
     try:
         with sync_playwright() as p:
