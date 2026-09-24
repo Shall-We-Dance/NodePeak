@@ -1,7 +1,7 @@
 'use strict';
 const $ = id => document.getElementById(id);
 const palette = ['#65e3b0','#75b5ff','#b79aff','#efbd71','#ef8da4','#6ad0df','#c0cc74','#ed936f'];
-const state = {live:null, hardware:null, systemExpanded:false, history:null, networkHistory:{range:3600,custom:null,data:null,generation:0}, containerHistory:{range:3600,custom:null,data:null,generation:0}, scans:[], diskRange:604800, diskCustom:null, diskWindow:null, diskGeneration:0, diskLoading:false, diskError:null, diskRangeInvalid:false, range:3600, custom:null, user:'all', iface:'physical', interfaceFilter:'all', storageQuery:'', root:'all', events:[], networkError:null, generation:0, charts:new Map()};
+const state = {live:null, hardware:null, systemExpanded:false, history:null, networkHistory:{range:3600,custom:null,data:null,generation:0}, powerHistory:{range:86400,custom:null,data:null,generation:0}, eventsGeneration:0, eventsSignature:null, containerHistory:{range:3600,custom:null,data:null,generation:0}, scans:[], diskRange:604800, diskCustom:null, diskWindow:null, diskGeneration:0, diskLoading:false, diskError:null, diskRangeInvalid:false, range:3600, custom:null, user:'all', iface:'physical', interfaceFilter:'all', storageQuery:'', root:'all', events:[], networkError:null, generation:0, charts:new Map()};
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt = (n, decimals=1) => n == null || !Number.isFinite(Number(n)) ? '—' : Number(n).toLocaleString(I18n.locale,{maximumFractionDigits:decimals,minimumFractionDigits:decimals});
 const bytes = (n, suffix='') => { if(n == null) return '—'; const units=['B','KiB','MiB','GiB','TiB','PiB']; const i=Math.min(5,Math.max(0,Math.floor(Math.log(Math.max(n,1))/Math.log(1024)))); return `${fmt(n/1024**i,i?1:0)} ${units[i]}${suffix}`; };
@@ -39,8 +39,6 @@ function renderHistory(){
   if(!state.history)return;const points=pointsWithGaps();const cpu=userSeries(points,'cpu');
   if(state.user==='all'&&points.length)cpu.push({...line(t("Host total"),points.map(p=>[p.ts*1000,p.gap?null:p.cpu]),'#c7d4e3'),lineStyle:{width:1.3,type:'dashed'},z:10});
   makeChart('cpu-chart',cpu,'%');makeChart('memory-chart',userSeries(points,'memory',1024**3),'GiB');
-  makeChart('health-chart',[line(t("CPU temperature °C"),points.map(p=>[p.ts*1000,p.gap?null:p.temperature]),3),{...line(t("UPS charge %"),points.map(p=>[p.ts*1000,p.gap?null:p.ups_charge]),0),yAxisIndex:1}],'',{
-    yAxis:[{type:'value',min:0,name:'°C',nameTextStyle:{color:'#8e9caf'},axisLabel:{color:'#8e9caf',fontSize:11,formatter:value=>fmt(value,Number.isInteger(value)?0:1)},splitLine:{lineStyle:{color:'#24303e',type:'dashed'}}},{type:'value',min:0,max:100,name:'%',nameTextStyle:{color:'#8e9caf'},axisLabel:{color:'#8e9caf',fontSize:11},splitLine:{show:false}}],grid:{left:50,right:45,top:38,bottom:70}});
   setText('resolution-label',t('{seconds}s / point · {count} samples',{seconds:fmt(state.history.resolution,0),count:fmt(state.history.points.length,0)}));
   renderDiskCharts();updateUserSelect();
 }
@@ -58,9 +56,14 @@ function renderContainerHistory(){const scope=state.containerHistory;if(!scope.d
   const containerSeries=[...containerIds].map(([id,name],i)=>line(name,points.map(p=>[p.ts*1000,p.containers?.[id]?.[containerMetric]==null?null:p.containers[id][containerMetric]/(containerMetric==='memory'?1024**3:1)]),i,true));
   makeChart('container-chart',containerSeries,containerMetric==='memory'?'GiB':'%',historyAxis(scope));
 }
+function renderPowerHistory(){const scope=state.powerHistory;if(!scope.data)return;const points=pointsWithGaps(scope.data);
+  makeChart('health-chart',[line(t("CPU temperature °C"),points.map(p=>[p.ts*1000,p.gap?null:p.temperature]),3),{...line(t("UPS charge %"),points.map(p=>[p.ts*1000,p.gap?null:p.ups_charge]),0),yAxisIndex:1}],'',{...historyAxis(scope),
+    yAxis:[{type:'value',min:0,name:'°C',nameTextStyle:{color:'#8e9caf'},axisLabel:{color:'#8e9caf',fontSize:11,formatter:value=>fmt(value,Number.isInteger(value)?0:1)},splitLine:{lineStyle:{color:'#24303e',type:'dashed'}}},{type:'value',min:0,max:100,name:'%',nameTextStyle:{color:'#8e9caf'},axisLabel:{color:'#8e9caf',fontSize:11},splitLine:{show:false}}],grid:{left:50,right:45,top:38,bottom:70}});
+}
 async function loadSectionHistory(key){
   const scope=state[key+'History'],generation=++scope.generation,end=Math.floor(Date.now()/1000);
   const window=scope.custom||{start:end-scope.range,end};scope.window=window;
+  if(key==='power')loadEvents();
   const signature=JSON.stringify([scope.range,scope.custom]);if(scope.signature!==signature)scope.data=null;scope.signature=signature;scope.error=null;scope.loading=true;renderSectionHistory(key);
   try{const data=await get('/api/history?'+new URLSearchParams(window));if(generation!==scope.generation)return;scope.data=data;}
   catch(error){if(generation!==scope.generation)return;scope.error=error.message;}
@@ -69,11 +72,11 @@ async function loadSectionHistory(key){
 function renderSectionHistory(key){
   const scope=state[key+'History'];
   setText(key+'-history-status',scope.error?t('Unable to load history: {error}',{error:t(scope.error)}):scope.loading?t('Loading history…'):t('Independent time range'));
-  for(const id of key==='network'?['network-chart','io-chart']:['container-chart']){
+  for(const id of key==='network'?['network-chart','io-chart']:key==='power'?['health-chart']:['container-chart']){
     $(id).setAttribute('aria-busy',String(!!scope.loading));
     if(!scope.data)makeChart(id,[],'',{...historyAxis(scope),graphic:[{type:'text',left:'center',top:'44%',style:{text:t(scope.loading?'Loading history…':'History unavailable'),fill:'#8e9caf',fontSize:12}}]});
   }
-  if(key==='network')renderNetworkHistory();else renderContainerHistory();
+  if(key==='network')renderNetworkHistory();else if(key==='power')renderPowerHistory();else renderContainerHistory();
 }
 function bindSectionRange(key){
   const scope=state[key+'History'];
@@ -95,7 +98,7 @@ function bindSectionRange(key){
     setText(key+'-range-error','');scope.custom={start:Math.floor(start),end:Math.floor(end)};loadSectionHistory(key);
   });
 }
-bindSectionRange('network');bindSectionRange('container');
+bindSectionRange('network');bindSectionRange('container');bindSectionRange('power');
 function updateUserSelect(){const users=new Map();for(const p of state.history?.points||[])for(const [uid,u]of Object.entries(p.users||{}))users.set(uid,u.name);for(const [uid,u]of Object.entries(state.live?.users||{}))users.set(uid,u.name);for(const [uid,u]of Object.entries(state.live?.disk_scan?.users||{}))users.set(uid,u.name);options('user-select',[...users].sort((a,b)=>a[1].localeCompare(b[1],I18n.locale)) ,['all',t("All users")]);}
 function renderDiskCharts(){
   if(!state.live)return;const scan=state.live.scan_progress||state.live.disk_scan,root=state.root;
@@ -201,7 +204,7 @@ function renderDisks(){
   const expanded=new Set([...cards.querySelectorAll('.disk-issues[open]')].map(details=>details.closest('[data-disk]').dataset.disk));
   const scrolls=new Map([...cards.querySelectorAll('.disk-user-table-wrap')].map(table=>[table.closest('[data-disk]').dataset.disk,table.scrollTop]));
   const selectedUser=Object.keys(currentScan.users||{}).includes(state.storageQuery)?state.storageQuery:state.user;
-  const html=l.disks.map(disk=>DiskUsage.render(disk,currentScan,l.disks,{esc,bytes,fmt,color,selectedUser,open:expanded.has(disk.mount)})).join('');
+  const html=l.disks.map(disk=>DiskUsage.render(disk,currentScan,l.disks,{esc,bytes,fmt,color,date,selectedUser,open:expanded.has(disk.mount)})).join('');
   const focused=document.activeElement?.closest('[data-storage-user]');
   const focusKey=focused&&cards.contains(focused)?{disk:focused.closest('[data-disk]').dataset.disk,uid:focused.dataset.storageUser}:null;
   if(cards.innerHTML!==html){
@@ -242,12 +245,25 @@ function renderPower(){
 const eventNames={container_change:'Container status',power_failure:'Power failure',power_restored:'Power restored',on_battery:'On battery',self_test:'UPS self-test',shutdown:'Shutdown',reboot:'System reboot',monitor_gap:'Collection gap',monitor_start:'Monitor started',ups_communication:'UPS communication',ups_event:'UPS event'};
 function translateEvent(message){return t(message);}
 function renderEvents(){
-  $('event-list').innerHTML=state.events.map(e=>`<div class="event"><time datetime="${new Date(e.ts*1000).toISOString()}">${new Date(e.ts*1000).toLocaleString(I18n.locale,{hour12:false})}</time><span class="pill ${e.severity==='critical'?'error':e.severity==='warning'?'warning':e.severity==='success'?'':'neutral'}">${esc(t(eventNames[e.kind]||e.kind))}</span><div class="event-text">${esc(translateEvent(e.message))}<small>${esc(t(e.source))}</small></div></div>`).join('')||`<div class="empty">${esc(t('No events of this type'))}</div>`;
+  $('event-list').innerHTML=state.events.map(e=>`<div class="event"><time datetime="${new Date(e.ts*1000).toISOString()}">${new Date(e.ts*1000).toLocaleString(I18n.locale,{hour12:false})}</time><span class="pill ${e.severity==='critical'?'error':e.severity==='warning'?'warning':e.severity==='success'?'':'neutral'}">${esc(t(eventNames[e.kind]||e.kind))}</span><div class="event-text">${esc(translateEvent(e.message))}<small>${esc(t(e.source))}</small></div></div>`).join('')||`<div class="empty">${esc(t('No events of this type in the selected time range'))}</div>`;
 }
 async function loadEvents(older=false){
-  const params=new URLSearchParams({limit:'30'}),filter=$('event-filter').value;if(filter)params.set('kind',filter);if(older&&state.events.length)params.set('before',state.events.at(-1).ts);
-  try{const data=await get(`/api/events?${params}`);if(filter!==$('event-filter').value)return;state.events=older?[...state.events,...data.events]:data.events;renderEvents();$('more-events').hidden=data.events.length<30;}
-  catch(error){if(!state.events.length)$('event-list').innerHTML=`<div class="empty">${esc(t('Unable to load events: {error}',{error:t(error.message)}))}</div>`;}
+  const window=state.powerHistory.window;if(!window)return;
+  const generation=++state.eventsGeneration,filter=$('event-filter').value;
+  const signature=JSON.stringify([state.powerHistory.range,state.powerHistory.custom,filter]);
+  if(signature!==state.eventsSignature){state.events=[];state.eventsSignature=signature;older=false;renderEvents();$('more-events').hidden=true;}
+  const before=older&&state.events.length?state.events.at(-1).ts:window.end+1;
+  const limit=older?30:Math.min(1000,Math.max(30,state.events.length));
+  const params=new URLSearchParams({limit:String(limit),before:String(before)});if(filter)params.set('kind',filter);
+  $('more-events').disabled=true;setText('event-status',t('Loading history…'));
+  try{
+    const data=await get(`/api/events?${params}`);if(generation!==state.eventsGeneration)return;
+    const events=data.events.filter(e=>e.ts>=window.start&&e.ts<=window.end);
+    state.events=older?[...state.events,...events]:events;renderEvents();
+    $('more-events').hidden=data.events.length<limit||data.events.at(-1)?.ts<=window.start;
+    setText('event-status',t('Events follow the selected time range'));
+  }catch(error){if(generation===state.eventsGeneration)setText('event-status',t('Unable to load events: {error}',{error:t(error.message)}));}
+  finally{if(generation===state.eventsGeneration)$('more-events').disabled=false;}
 }
 function diskTimeWindow(){const end=Math.floor(Date.now()/1000);return state.diskCustom||{start:end-state.diskRange,end};}
 function renderDiskHistoryStatus(){
@@ -274,15 +290,14 @@ async function loadHistory(){
   catch(error){if(generation===state.generation){setText('range-error',t(error.message));notice('error-banner',t('Unable to load history: {error}',{error:t(error.message)}));}}
 }
 function renderConnectionError(){setText('connection-label',t('Disconnected'));for(const id of ['connection-dot','side-dot'])$(id).classList.add('offline');notice('error-banner',t('Unable to fetch live data: {error}. Showing the last sample and retrying automatically.',{error:t(state.networkError)}));}
-let liveLoading=false,lastHistory=0,lastDiskHistory=0,lastEvents=0;
+let liveLoading=false,lastHistory=0,lastDiskHistory=0;
 async function refresh(force=false){
   if(liveLoading)return;liveLoading=true;$('refresh').disabled=true;
   try{const live=await get('/api/live');state.networkError=null;renderLive(live);}catch(error){state.networkError=error.message;renderConnectionError();}
   finally{liveLoading=false;$('refresh').disabled=false;}
   const now=Date.now(),jobs=[];
-  if(force||now-lastHistory>14000){lastHistory=now;jobs.push(loadHistory(),loadSectionHistory('network'),loadSectionHistory('container'));}
+  if(force||now-lastHistory>14000){lastHistory=now;jobs.push(loadHistory(),loadSectionHistory('network'),loadSectionHistory('container'),loadSectionHistory('power'));}
   if(force||now-lastDiskHistory>59000)jobs.push(loadDiskHistory());
-  if(force||now-lastEvents>29000){lastEvents=now;jobs.push(loadEvents());}
   await Promise.all(jobs);
 }
 $('refresh').addEventListener('click',()=>{refresh(true);loadHardware();});
@@ -314,7 +329,7 @@ $('storage-user-cards').addEventListener('click',event=>{
 $('disk-root-select').addEventListener('change',e=>{state.root=e.target.value;renderDiskCharts();});
 $('container-metric').addEventListener('change',()=>renderContainerHistory());
 $('event-filter').addEventListener('change',()=>loadEvents());
-$('more-events').addEventListener('click',async()=>{$('more-events').disabled=true;await loadEvents(true);$('more-events').disabled=false;});
+$('more-events').addEventListener('click',()=>loadEvents(true));
 function activeRange(button){for(const b of document.querySelectorAll('[data-range]')){b.classList.toggle('active',b===button);b.setAttribute('aria-pressed',String(b===button));}}
 $('range-buttons').addEventListener('click',e=>{const button=e.target.closest('[data-range]');if(!button)return;activeRange(button);const value=button.dataset.range;$('custom-range').hidden=value!=='custom';if(value==='custom'){if(!$('range-end').value){const local=n=>{const d=new Date(n);return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);};$('range-start').value=local(Date.now()-3600000);$('range-end').value=local(Date.now());}return;}state.range=Number(value);state.custom=null;loadHistory();});
 $('custom-range').addEventListener('submit',e=>{e.preventDefault();const start=new Date($('range-start').value).getTime()/1000,end=new Date($('range-end').value).getTime()/1000;if(!Number.isFinite(start)||!Number.isFinite(end)||start>=end||end-start>90*86400){setText('range-error',t("Select a valid time range of up to 90 days."));return;}state.custom={start:Math.floor(start),end:Math.floor(end)};loadHistory();});
@@ -347,7 +362,7 @@ const navLinks=[...document.querySelectorAll('nav a')];const observer=new Inters
 setInterval(()=>setText('clock',new Date().toLocaleTimeString(I18n.locale,{hour12:false})),1000);
 setInterval(()=>{if(!document.hidden)refresh();},5000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){refresh(true);loadHardware();}});
-window.addEventListener('monitor-language-change',()=>{for(const chart of state.charts.values())chart.dispose();state.charts.clear();if(state.live)renderLive(state.live);if(state.hardware)HardwareUI.render(state.hardware,{esc,bytes,date});renderHistory();renderSectionHistory('network');renderSectionHistory('container');renderDiskHistory();renderEvents();if(state.networkError)renderConnectionError();setText('clock',new Date().toLocaleTimeString(I18n.locale,{hour12:false}));if($('range-error').textContent)setText('range-error',t('Select a valid time range of up to 90 days.'));});
+window.addEventListener('monitor-language-change',()=>{for(const chart of state.charts.values())chart.dispose();state.charts.clear();if(state.live)renderLive(state.live);if(state.hardware)HardwareUI.render(state.hardware,{esc,bytes,date});renderHistory();renderSectionHistory('network');renderSectionHistory('container');renderSectionHistory('power');renderDiskHistory();renderEvents();if(state.networkError)renderConnectionError();setText('clock',new Date().toLocaleTimeString(I18n.locale,{hour12:false}));if($('range-error').textContent)setText('range-error',t('Select a valid time range of up to 90 days.'));});
 if(typeof echarts==='undefined'){notice('error-banner',t("The local chart library failed to load. Refresh the page or check static/vendor/echarts.min.js."));}else{refresh(true);}
 
 loadHardware();

@@ -10,7 +10,7 @@ For an update:
 
 1. Back up the database and configuration.
 2. Stop the old collector (`systemctl --user stop nodepeek` or `sudo systemctl stop nodepeek`).
-3. Extract the matching new edition and install using a fresh absolute `--prefix`. For example, a future version could use `$HOME/.local/share/nodepeek-1.3.3` or `/opt/nodepeek-1.3.3`.
+3. Extract the matching new edition and install using a fresh absolute `--prefix`. For example, a future version could use `$HOME/.local/share/nodepeek-1.4.0` or `/opt/nodepeek-1.4.0`.
 4. The existing config/data remain in their original paths. The systemd service is updated to use the new code; a prior unit is retained as `.service.bak`.
 5. Verify the service and dashboard before removing the old code. If installation fails, correct the error and use a fresh prefix, or restore the previous service unit. Do not delete configuration or history to retry.
 

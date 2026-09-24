@@ -51,3 +51,6 @@ for(const [disk,label] of [
  [{type:'rom',tran:'sata',rota:false},'Optical drive'],[{},'Unknown drive type']
 ])assert.equal(classify(disk).label,label);
 console.log('Passed: drive transport, media, unknown attributes and RAID precedence.');
+
+assert.equal(classify({tran:'nvme',rota:false}).kind,'nvme');
+assert.equal(classify({tran:'sata',rota:false}).kind,'ssd');

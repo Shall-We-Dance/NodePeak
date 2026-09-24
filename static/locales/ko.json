@@ -465,5 +465,11 @@
   "Independent time range": "독립 시간 범위",
   "Loading history…": "기록 로딩 중…",
   "History unavailable": "기록을 사용할 수 없음",
-  "Stacked by container · independent time range": "컨테이너별 누적 · 독립 시간 범위"
+  "Stacked by container · independent time range": "컨테이너별 누적 · 독립 시간 범위",
+  "Allocated space · last scan": "할당 공간 · 마지막 스캔",
+  "Used · ownership awaiting scan": "사용 중 · 소유자 스캔 대기",
+  "Last scan: {time}": "마지막 스캔: {time}",
+  "Files changed since the scan. Gray user values are historical; the bar shows live usage. Ownership will update after the next scan.": "스캔 이후 파일이 변경되었습니다. 회색 사용자 값은 이전 기록이며 막대는 실시간 사용량입니다. 다음 스캔 후 소유자 정보가 갱신됩니다.",
+  "No events of this type in the selected time range": "선택한 기간에 해당 유형의 이벤트가 없습니다",
+  "Events follow the selected time range": "이벤트는 선택한 기간을 따릅니다"
 }

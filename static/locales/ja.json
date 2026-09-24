@@ -465,5 +465,11 @@
   "Independent time range": "独立した期間",
   "Loading history…": "履歴を読み込み中…",
   "History unavailable": "履歴を利用できません",
-  "Stacked by container · independent time range": "コンテナ別積み上げ · 独立した期間"
+  "Stacked by container · independent time range": "コンテナ別積み上げ · 独立した期間",
+  "Allocated space · last scan": "使用量 · 前回のスキャン",
+  "Used · ownership awaiting scan": "使用済み · 所有者のスキャン待ち",
+  "Last scan: {time}": "前回のスキャン: {time}",
+  "Files changed since the scan. Gray user values are historical; the bar shows live usage. Ownership will update after the next scan.": "スキャン後にファイルが変更されました。灰色のユーザー値は過去の値で、バーは現在の使用量です。所有者情報は次回のスキャン後に更新されます。",
+  "No events of this type in the selected time range": "選択した期間にこの種類のイベントはありません",
+  "Events follow the selected time range": "イベントは選択した期間に従います"
 }

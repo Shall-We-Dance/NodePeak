@@ -465,5 +465,11 @@
   "Independent time range": "独立时间范围",
   "Loading history…": "正在加载历史…",
   "History unavailable": "历史数据不可用",
-  "Stacked by container · independent time range": "按容器堆叠 · 独立时间范围"
+  "Stacked by container · independent time range": "按容器堆叠 · 独立时间范围",
+  "Allocated space · last scan": "占用空间 · 上次扫描",
+  "Used · ownership awaiting scan": "已用 · 用户归属待扫描",
+  "Last scan: {time}": "上次扫描：{time}",
+  "Files changed since the scan. Gray user values are historical; the bar shows live usage. Ownership will update after the next scan.": "扫描后文件已变化。灰色用户数据为历史值，容量条显示实时占用；用户归属将在下次扫描后更新。",
+  "No events of this type in the selected time range": "所选时间范围内没有此类事件",
+  "Events follow the selected time range": "事件按所选时间范围显示"
 }
