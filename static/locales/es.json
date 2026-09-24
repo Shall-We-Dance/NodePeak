@@ -465,5 +465,11 @@
   "Independent time range": "Intervalo independiente",
   "Loading history…": "Cargando historial…",
   "History unavailable": "Historial no disponible",
-  "Stacked by container · independent time range": "Apilado por contenedor · intervalo independiente"
+  "Stacked by container · independent time range": "Apilado por contenedor · intervalo independiente",
+  "Allocated space · last scan": "Espacio asignado · último análisis",
+  "Used · ownership awaiting scan": "Usado · propietarios pendientes de análisis",
+  "Last scan: {time}": "Último análisis: {time}",
+  "Files changed since the scan. Gray user values are historical; the bar shows live usage. Ownership will update after the next scan.": "Los archivos cambiaron después del análisis. Los valores grises son históricos; la barra muestra el uso actual. Los propietarios se actualizarán tras el siguiente análisis.",
+  "No events of this type in the selected time range": "No hay eventos de este tipo en el intervalo seleccionado",
+  "Events follow the selected time range": "Los eventos siguen el intervalo seleccionado"
 }

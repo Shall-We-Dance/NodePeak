@@ -34,7 +34,8 @@ def main():
                 elif url.path == '/api/disk-history':
                     result = {'scans': data['scans']}
                 elif url.path == '/api/events':
-                    result = {'events': data['events']}
+                    rows = [e for e in data['events'] if e['ts'] < int(query.get('before', [2**63-1])[0]) and (not query.get('kind') or e['kind'] == query['kind'][0])]
+                    result = {'events': sorted(rows, key=lambda e: e['ts'], reverse=True)[:int(query.get('limit', [30])[0])]}
                 elif url.path in ('/api/live', '/api/hardware'):
                     result = data[url.path.split('/')[-1]]
                 else:
@@ -93,6 +94,9 @@ def main():
             page.evaluate("I18n.setLanguage('zh'); scrollTo(0,0)")
             page.screenshot(path=str(output / 'mobile-zh.png'))
             assert not page.evaluate('document.documentElement.scrollWidth>innerWidth')
+            assert not errors, errors
+            from check_independent_ranges import check_page
+            check_page(page)
             assert not errors, errors
             browser.close()
     finally:

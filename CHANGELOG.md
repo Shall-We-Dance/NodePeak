@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Keep live used/free/reserved disk capacity visible after file deletion; label inconsistent user totals as historical and avoid fabricated attribution.
+- Give power/temperature charts and events an independent time range, collapse sensors by default, and compact the scrollable event list.
+
 - Add read-only CI for supported Python versions, frontend tests, generated assets, release reproducibility/audits and synthetic browser previews.
 - Document the repository maintenance workflow and keep generated source manifests out of the editable repository root.
 

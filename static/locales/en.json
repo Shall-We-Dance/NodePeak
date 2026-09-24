@@ -465,5 +465,11 @@
   "Independent time range": "Independent time range",
   "Loading history…": "Loading history…",
   "History unavailable": "History unavailable",
-  "Stacked by container · independent time range": "Stacked by container · independent time range"
+  "Stacked by container · independent time range": "Stacked by container · independent time range",
+  "Allocated space · last scan": "Allocated space · last scan",
+  "Used · ownership awaiting scan": "Used · ownership awaiting scan",
+  "Last scan: {time}": "Last scan: {time}",
+  "Files changed since the scan. Gray user values are historical; the bar shows live usage. Ownership will update after the next scan.": "Files changed since the scan. Gray user values are historical; the bar shows live usage. Ownership will update after the next scan.",
+  "No events of this type in the selected time range": "No events of this type in the selected time range",
+  "Events follow the selected time range": "Events follow the selected time range"
 }

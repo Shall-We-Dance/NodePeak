@@ -10,9 +10,11 @@ No cloud account, frontend build step, CDN or external database. Choose an unpri
 
 *All documentation screenshots use synthetic data: example users, fictional hardware, documentation-only addresses and generated metrics. They are not captures of a real server.*
 
-Network & disk I/O and Docker each have independent time controls (15m–30d presets and custom dates up to 90 days). Changing Resource trends does not change these sections.
+Network & disk I/O, Docker, and Power each have independent time controls (15m–30d presets and custom dates up to 90 days). Changing Resource trends does not change these sections.
 
 Development workflow and CI: [contributing guide](CONTRIBUTING.md). Repository: [Shall-We-Dance/NodePeak](https://github.com/Shall-We-Dance/NodePeak); product name: **NodePeek**.
+
+Power defaults to the last 24 hours; its time range also filters the event log. Temperature sensors are collapsed initially. If files change between disk scans, live capacity stays visible and inconsistent ownership values are marked as historical until the next scan.
 
 ## What you can see
 
